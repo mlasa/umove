@@ -39,6 +39,17 @@ body, input, textarea, button{
 }
 button{
   cursor: pointer;
+
+  width: 100%;
+
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 5px;
 }
 a{
   color: inherit;
