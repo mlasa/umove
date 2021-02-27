@@ -1,26 +1,35 @@
 import styles from '../styles/components/ChallengeBox.module.css';
+import {useChallenge} from '../hooks/Challenges';
 
 export function ChallengeBox(){
-  const hasActiveChallenge = true;
+  const {hasActiveChallenge, completeChallenge, challenge, changeStatusChallenge} = useChallenge();
 
   return(
     <div className={styles.challengeBoxContainer}>
       {
         hasActiveChallenge?(
           <div className={styles.challengeBoxActive}>
-            <header>Ganhe 400 xp</header>
+            <header>{`Ganhe ${challenge.amount} xp`}</header>
             <main>
-              <img src="icons/body.svg" alt="exercício físico"/>
+              {
+                challenge.type === 'body'? (
+                  <img src="icons/body.svg" alt="exercício para o corpo"/>
+                ):(
+                  <img src="icons/eye.svg" alt="exercício para os olhos"/>
+                )
+              }
               <strong>Novo desafio</strong>
-              <p>Exercite-se por 3 minutos</p>
+              <p>{challenge.description}</p>
             </main>
             <footer>
               <button
+                onClick= {()=>changeStatusChallenge(false)}
                 type="button"
                 className={styles.challengeFailedButton}>
                 Falhei
               </button>
               <button
+                onClick={()=>completeChallenge(challenge.amount)}
                 type="button"
                 className={styles.challengeSuccededButton}>
                 Completei
