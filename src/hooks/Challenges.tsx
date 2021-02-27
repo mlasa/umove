@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import challengesArray from '../../challenges.json';
+import { useCountdown} from './Countdown';
+
+import challenges from '../../challenges.json';
 
 interface ChallengesProviderProps{
   children: ReactNode;
@@ -16,49 +18,68 @@ interface ChallengeContextData{
   xp: number;
   level:number;
   challengesCompleted:number;
-  hasActiveChallenge: boolean;
   challenge: ChallengesProperties;
-  changeStatusChallenge(bool:boolean):void;
-  completeChallenge(score:number): void;
+  xpToNextLevel: number;
+  startNewChallenge(): void;
+  completeChallenge(): void;
+  levelUp(): void;
+  giveUp(): void;
 }
+
 
 const ChallengesContext = createContext <ChallengeContextData> ({} as ChallengeContextData);
 
-function ChallengeProvider(props:ChallengesProviderProps){
-  const [hasActiveChallenge, setHasActiveChallenge] = useState(false);
+function ChallengeProvider({children}:ChallengesProviderProps){
   const [xp, setXp] = useState(0);
   const [level, setLevel] = useState(1);
-  const [challenge, setChallenge] = useState<ChallengesProperties>({} as ChallengesProperties);
+  const [challenge, setChallenge] = useState(null);
   const [challengesCompleted, setChallengesCompleted] = useState(0);
 
-
-  function changeStatusChallenge(bool:boolean):void{
-    setHasActiveChallenge(bool);
+  const xpToNextLevel = Math.pow(( level+ 1) * 4, 2) // 4 sendo fator de dificuldade
+  
+  function startNewChallenge(){
+    console.log("Start new challenge")
+    const sortedNumber = Math.floor(Math.random() * (1 + challenges.length) + 1);
+    setChallenge(challenges[sortedNumber]);
   };
   
-  function levelUp():void{
-    setLevel(level+1);
-    setXp(0);
+  function levelUp(){
+    setLevel(level + 1);
   };
 
-    function completeChallenge(score:number){
-      if(!score)
-        throw new Error('completeChallenge function needs receive a score');
-        
-      setXp(xp + score);
-      setChallengesCompleted(challengesCompleted + 1);
-      setHasActiveChallenge(false);
+  function giveUp(){
+    setChallenge(null);
+  };
+  
+  function completeChallenge(){
+    if(!challenge){
+      console.log('não tem desafio', challenge)
+      return;
+    }
+    let totalXP = xp + challenge.amount;
+    if(totalXP >= xpToNextLevel){
+      levelUp();
+      totalXP = totalXP - xpToNextLevel;
+    }
 
-      if(xp === 600 || xp > 600)
-        levelUp();
-
-      const sortedNumber = Math.floor(Math.random() * (1+12) + 1);
-      setChallenge(challengesArray[sortedNumber]);
-    };
+    setXp(totalXP);
+    setChallenge(null);
+    setChallengesCompleted(challengesCompleted + 1);
+  };
 
   return(
-    <ChallengesContext.Provider value={{xp, level, hasActiveChallenge, challengesCompleted, challenge, changeStatusChallenge, completeChallenge}}>
-      {props.children}
+    <ChallengesContext.Provider value={{
+      xp,
+      level,
+      challengesCompleted,
+      challenge,
+      xpToNextLevel,
+      completeChallenge,
+      startNewChallenge,
+      levelUp,
+      giveUp,
+      }}>
+      {children}
     </ChallengesContext.Provider>
   )
 };

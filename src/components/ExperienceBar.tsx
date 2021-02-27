@@ -3,15 +3,18 @@ import styles from '../styles/components/ExperienceBar.module.css';
 import {useChallenge} from '../hooks/Challenges';
 
 export  function ExperienceBar () {
-  const {xp} = useChallenge();
+  const {xp, xpToNextLevel} = useChallenge();
+
+  const nextLevel = Math.round(xp*100)/xpToNextLevel;
+
   return(
     <header className={styles.experienceBar}>
       <span>0 xp</span>
       <div>
-        <div style={{width: '50%'}}/>
-        <span className={styles.currentExperience} style={{left: '50%'}} >{`${xp} xp`} </span>
+        <div style={{width:`${nextLevel}%`}}/>
+        <span className={styles.currentExperience} style={{left: `${nextLevel}%`}} >{`${xp} xp`} </span>
       </div>
-      <span>600 xp</span>
+      <span>{`${xpToNextLevel} xp`}</span>
     </header>
   );
 };

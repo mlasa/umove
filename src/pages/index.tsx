@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import { CountdownProvider} from '../hooks/Countdown';
+
 
 import {ExperienceBar} from '../components/ExperienceBar';
 import {Profile} from '../components/Profile';
@@ -16,16 +18,19 @@ export default function Home() {
         <title>Início | Umove</title>
       </Head>
       <ExperienceBar/>
-      <section>
-        <div>
-          <Profile/>
-          <CompletedChallenges/>
-          <Countdown/>
-        </div>
-        <div>
-          <ChallengeBox/>
-        </div>
-      </section>
+
+      <CountdownProvider>
+        <section>
+          <div>
+            <Profile/>
+            <CompletedChallenges/>
+            <Countdown/>
+          </div>
+          <div>
+            <ChallengeBox/>
+          </div>
+        </section>
+      </CountdownProvider>
     </div>
   )
 }

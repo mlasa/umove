@@ -1,13 +1,20 @@
 import styles from '../styles/components/ChallengeBox.module.css';
 import {useChallenge} from '../hooks/Challenges';
+import {useCountdown} from '../hooks/Countdown';
 
 export function ChallengeBox(){
-  const {hasActiveChallenge, completeChallenge, challenge, changeStatusChallenge} = useChallenge();
+  const { 
+    challenge,
+    giveUp,
+    completeChallenge
+  } = useChallenge();
+  const {resetCountdown} = useCountdown();
 
+ 
   return(
     <div className={styles.challengeBoxContainer}>
       {
-        hasActiveChallenge?(
+        challenge?(
           <div className={styles.challengeBoxActive}>
             <header>{`Ganhe ${challenge.amount} xp`}</header>
             <main>
@@ -23,13 +30,19 @@ export function ChallengeBox(){
             </main>
             <footer>
               <button
-                onClick= {()=>changeStatusChallenge(false)}
+                onClick= {()=>{
+                  giveUp()
+                  resetCountdown()
+                }}
                 type="button"
                 className={styles.challengeFailedButton}>
                 Falhei
               </button>
               <button
-                onClick={()=>completeChallenge(challenge.amount)}
+                onClick= {()=>{
+                  completeChallenge()
+                  resetCountdown()
+                }}
                 type="button"
                 className={styles.challengeSuccededButton}>
                 Completei

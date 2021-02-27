@@ -1,46 +1,12 @@
-import { useEffect, useState } from 'react';
-
 import styles from '../styles/components/Countdown.module.css';
-import {useChallenge} from '../hooks/Challenges';
+import { useCountdown } from '../hooks/Countdown';
 
-let countdownTimeout: NodeJS.Timeout;
+export function Countdown () {
+  const {minutes, seconds,isActive, hasFinished, resetCountdown, startCountdown} = useCountdown();
 
-export function Countdown (){
-  const [time, setTime] = useState(0.05*60);
-  const [isActive, setIsActive] = useState(false);
-
-  const {changeStatusChallenge, hasActiveChallenge} = useChallenge();
-
-  const minutes = Math.floor(time/60);
-  const seconds = time % 60;
-
+  
   const [firstNumberOfMinute, secondNumberOfMinute] = String(minutes).padStart(2,'0').split('');
   const [firstNumberOfSecond, secondNumberOfSecond] = String(seconds).padStart(2,'0').split('');
-
-  function startCountdown(){
-    setIsActive(true);
-  }
-  function resetCountdown(){
-    clearTimeout(countdownTimeout);
-    setIsActive(false);
-    setTime(0.05 * 60);
-  }
-
-  useEffect(()=>{
-    if(!hasActiveChallenge)
-      resetCountdown();
-  },[hasActiveChallenge])
-
-  useEffect(()=>{
-    if(isActive && time> 0) {
-      countdownTimeout = setTimeout(() => {
-        setTime(time-1);
-      }, 1000)
-    } else if(isActive && time === 0){
-      setIsActive(false);
-      changeStatusChallenge(true);
-    }
-  },[isActive, time]);
 
   return(
     <div>
@@ -56,7 +22,7 @@ export function Countdown (){
         </div>
       </div>
 
-      {hasActiveChallenge ? (
+      {hasFinished ? (
         <button disabled className={styles.countdownButton}>
           Desafio concluído!
         </button>
