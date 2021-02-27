@@ -6,6 +6,6 @@
 Esse é um projeto feito em ReactJS com NextJS. O objetivo é ser uma ferramenta para incentivar pessoas que passam muito tempo no computador a se exercitar para evitar problemas de saúde. Usa um sitema de  gamificação e a técnica de Pomodoro. Ao fim de cada período é proposto um desafio e conforme o cumprimento, ou não, você ganha pontos.
 </p>
 
-## 📺  Interface em construção ⚒️
-![Screenshot](nlw4_1.png)
+## 📺  Interface ⚒️
 ![Screenshot](nlw4_2.png)
+![Screenshot](nlw4_1.png)
