@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
-import { useCountdown} from './Countdown';
+import Cookies from 'js-cookie';
 
 import challenges from '../../challenges.json';
 
@@ -26,21 +25,53 @@ interface ChallengeContextData{
   giveUp(): void;
 }
 
-
 const ChallengesContext = createContext <ChallengeContextData> ({} as ChallengeContextData);
 
 function ChallengeProvider({children}:ChallengesProviderProps){
-  const [xp, setXp] = useState(0);
-  const [level, setLevel] = useState(1);
+  
   const [challenge, setChallenge] = useState(null);
-  const [challengesCompleted, setChallengesCompleted] = useState(0);
+  const [challengesCompleted, setChallengesCompleted] = useState(() => {
+    const challengesCompleted = parseInt(Cookies.get('umoveChallengesCompleted'));
+    if (challengesCompleted) return challengesCompleted;
+
+    return 0;
+  });
+  const [xp, setXp] = useState(() => {
+    const xp = parseInt(Cookies.get('umoveXp'));
+    if (xp) return xp;
+
+    return 0;
+  });
+  const [level, setLevel] = useState(() => {
+    const level = parseInt(Cookies.get('umoveLevel'));
+    if (level) return level;
+
+    return 1;
+  });
 
   const xpToNextLevel = Math.pow(( level+ 1) * 4, 2) // 4 sendo fator de dificuldade
   
+  useEffect(()=>{Notification.requestPermission();});
+
+  useEffect(()=>{
+    Cookies.set('umoveXp', xp.toString());
+    Cookies.set('umoveLevel', level.toString());
+    Cookies.set('umoveChallengesCompleted', challengesCompleted.toString());
+
+  },[xp, level, challengesCompleted]) 
+
   function startNewChallenge(){
     console.log("Start new challenge")
     const sortedNumber = Math.floor(Math.random() * (1 + challenges.length) + 1);
-    setChallenge(challenges[sortedNumber]);
+    const newChallenge = challenges[sortedNumber];
+    setChallenge(newChallenge);
+
+    new Audio('/notification.mp3').play();
+    if(Notification.permission === 'granted'){
+      new Notification('Novo desafio 🎊',{
+        body:`Vem ver qual é seu novo desafio`
+      });
+    }
   };
   
   function levelUp(){
