@@ -1,6 +1,8 @@
 import Head from 'next/head';
-import { CountdownProvider} from '../hooks/Countdown';
+import {GetServerSideProps} from 'next';
 
+import { CountdownProvider} from '../hooks/Countdown';
+import { ChallengeProvider} from '../hooks/Challenges';
 
 import {ExperienceBar} from '../components/ExperienceBar';
 import {Profile} from '../components/Profile';
@@ -11,26 +13,52 @@ import {ChallengeBox} from '../components/ChallengeBox';
 
 import styles from '../styles/pages/Home.module.css';
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head> 
-        <title>Início | Umove</title>
-      </Head>
-      <ExperienceBar/>
+interface HomeProps{
+  level: number;
+  xp: number;
+  challengesCompleted: number;
+}
 
-      <CountdownProvider>
-        <section>
-          <div>
-            <Profile/>
-            <CompletedChallenges/>
-            <Countdown/>
-          </div>
-          <div>
-            <ChallengeBox/>
-          </div>
-        </section>
-      </CountdownProvider>
-    </div>
+export default function Home(props:HomeProps) {
+  return (
+
+    <ChallengeProvider
+    level={props.level}
+    challengesCompleted={props.challengesCompleted} 
+    xp={props.xp}
+    >
+      <div className={styles.container}>
+        <Head> 
+          <title>Início | Umove</title>
+        </Head>
+        <ExperienceBar/>
+
+        <CountdownProvider>
+          <section>
+            <div>
+              <Profile/>
+              <CompletedChallenges/>
+              <Countdown/>
+            </div>
+            <div>
+              <ChallengeBox/>
+            </div>
+          </section>
+        </CountdownProvider>
+      </div>
+    </ChallengeProvider>
   )
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx)=> {
+  
+  const {umoveXp, umoveLevel, umoveChallengesCompleted}= ctx.req.cookies;
+
+  return{
+    props:{
+      xp: Number(umoveXp),
+      level: Number(umoveLevel),
+      challengesCompleted: Number(umoveChallengesCompleted)
+    }
+  }
+};

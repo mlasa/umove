@@ -40,8 +40,6 @@ body, input, textarea, button{
 button{
   cursor: pointer;
 
-  width: 100%;
-
   font-weight: 600;
 
   display: flex;
